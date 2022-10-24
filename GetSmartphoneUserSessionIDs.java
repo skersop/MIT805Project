@@ -16,9 +16,9 @@ import org.apache.hadoop.mapreduce.Reducer;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 
-public class GetSmartphoneUserSessions {
+public class GetSmartphoneUserSessionIDs {
   
-	public static class GetSmartphoneUserSessionsMapper 
+	public static class GetSmartphoneUserSessionIDsMapper 
 	extends Mapper<LongWritable, Text, Text, NullWritable> {
 
 		private static String filterString = "electronics.smartphone"; //The desired filter
@@ -38,7 +38,7 @@ public class GetSmartphoneUserSessions {
 		}
 	}
 	
-	public static class GetSmartphoneUserSessionsReducer
+	public static class GetSmartphoneUserSessionIDsReducer
 		extends Reducer<Text, NullWritable, Text, NullWritable> {
 		
 		//Reducer will automatically remove duplicates
@@ -51,10 +51,10 @@ public class GetSmartphoneUserSessions {
 	public static void main(String[] args) throws Exception {
 		Configuration conf = new Configuration();
 		Job job = Job.getInstance(conf, "filterSmartphoneUserSessions");
-		job.setJarByClass(GetSmartphoneUserSessions.class);
-		job.setMapperClass(GetSmartphoneUserSessionsMapper.class);
-		job.setCombinerClass(GetSmartphoneUserSessionsReducer.class);
-		job.setReducerClass(GetSmartphoneUserSessionsReducer.class);
+		job.setJarByClass(GetSmartphoneUserSessionIDs.class);
+		job.setMapperClass(GetSmartphoneUserSessionIDsMapper.class);
+		job.setCombinerClass(GetSmartphoneUserSessionIDsReducer.class);
+		job.setReducerClass(GetSmartphoneUserSessionIDsReducer.class);
 		job.setOutputKeyClass(Text.class);
 		job.setOutputValueClass(NullWritable.class);
 		FileInputFormat.addInputPath(job, new Path(args[0]));
