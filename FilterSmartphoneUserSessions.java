@@ -40,7 +40,7 @@ public class FilterSmartphoneUserSessions {
 					String[] singleEvent = valueString.split(","); //Splits row into columns
 					while (myReader.hasNextLine()) {
 						filterString = myReader.nextLine();
-						if (singleEvent[9].matches(filterString)){ //If the session ID the filter, we output
+						if (singleEvent[8].matches(filterString)){ //If the session ID the filter, we output
 							context.write(value, NullWritable.get()); //Write key-value pair as output
 							break;
 						}

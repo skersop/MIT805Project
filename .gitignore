@@ -1,0 +1,21 @@
+# Data files
+*.csv
+
+# Output files
+*.txt
+_SUCCESS*
+part*
+*.crc
+
+# Compiled class file
+*.class
+
+# Package Files #
+*.jar
+*.war
+*.nar
+*.ear
+*.zip
+*.tar.gz
+*.rar
+

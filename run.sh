@@ -68,10 +68,16 @@ rm -r ${TASK2}
 echo "----- Running job -----"
 ${HADOOP} jar ${TASK2}.jar ${TASK2} ${INPUT_PATH} ${TASK2}
 
+echo "----- Saving output -----"
+cat ${TASK2}/* &> "filteredSessions.txt"
+
 echo "----- Printing results -----"
 cat ${TASK2}/*
 
-
-
+echo "========================================"
+echo "---------------- Cleanup ----------------"
+echo "========================================"
+rm *.class
+rm *.jar
 
 

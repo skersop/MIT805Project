@@ -31,8 +31,8 @@ public class GetSmartphoneUserSessionIDs {
 			else {			
 				String valueString = value.toString(); //Gets entire row as string
 				String[] singleEvent = valueString.split(","); //Splits row into columns
-				if (singleEvent[5].matches(filterString)){ //If the category matches the filter, we output
-					context.write(new Text(singleEvent[9]), NullWritable.get()); //Write key-value pair as output
+				if (singleEvent[4].matches(filterString)){ //If the category matches the filter, we output
+					context.write(new Text(singleEvent[8]), NullWritable.get()); //Write key-value pair as output
 				}
 			}		
 		}
