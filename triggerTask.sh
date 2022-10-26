@@ -1,7 +1,7 @@
 
-HADOOP="$( which hadoop )"
-TASK=$1
-INPUT_PATH=$2
+HADOOP=$1
+TASK=$2
+INPUT_PATH=$3
 
 
 echo "----- Compiling script -----"
@@ -16,9 +16,3 @@ ${HADOOP} jar ${TASK}.jar ${TASK} ${INPUT_PATH} ${TASK}
 
 echo "----- Printing results -----"
 cat ${TASK}/*
-
-echo "========================================"
-echo "---------------- Cleanup ----------------"
-echo "========================================"
-rm *.class
-rm *.jar

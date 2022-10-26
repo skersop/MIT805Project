@@ -9,6 +9,8 @@ import java.io.IOException;
 import java.io.File;  // Import the File class
 import java.io.FileNotFoundException;  // Import this class to handle errors
 import java.util.Scanner; // Import the Scanner class to read text files
+import java.util.ArrayList;
+
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.NullWritable;
@@ -34,7 +36,7 @@ public class FilterSmartphoneUserSessions {
 				return;
 			else {	
 				try{
-					File myObj = new File("sessionids.txt");
+					File myObj = new File("GetSmartphoneUserSessionIDs.txt");
 					Scanner myReader = new Scanner(myObj);				
 					String valueString = value.toString(); //Gets entire row as string
 					String[] singleEvent = valueString.split(","); //Splits row into columns
@@ -50,7 +52,8 @@ public class FilterSmartphoneUserSessions {
 				      	System.out.println("An error occurred.");
 				      	e.printStackTrace();
 			    	}
-			}		
+			}	
+				
 		}
 	}
 
