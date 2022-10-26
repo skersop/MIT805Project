@@ -16,7 +16,7 @@ TASK3="FilterSmartphoneUserSessions"
 TASK4="CountCategoryCodes"
 TASK5="CountBrands"
 TASK6="SmartphoneTimes"
-
+TASK7="PopularPeakCategories"
 bash ./triggerTask.sh ${HADOOP} ${TASK1} ${INPUT_PATH}
 cat ${TASK1}/* &> "${TASK1}.txt"
 rm -r ${TASK1}
@@ -40,6 +40,15 @@ rm -r ${TASK5}
 bash ./triggerTask.sh ${HADOOP} ${TASK6} ${INPUT_PATH}
 cat ${TASK6}/* &> "${TASK6}.txt"
 rm -r ${TASK6}
+
+javac PeakHours.java
+jar cf PeakHours.jar PeakHours*.class
+java PeakHours
+
+bash ./triggerTask.sh ${HADOOP} ${TASK7} ${INPUT_PATH}
+cat ${TASK7}/* &> "${TASK7}.txt"
+rm -r ${TASK7}
+
 
 echo "========================================"
 echo "---------------- Cleanup ----------------"
