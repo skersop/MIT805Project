@@ -8,6 +8,7 @@ import java.io.FileNotFoundException;  // Import this class to handle errors
 import java.util.Scanner; // Import the Scanner class to read text files
 import java.io.File;
 import java.io.FileWriter;
+import java.util.HashMap;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
@@ -27,9 +28,36 @@ public class PopularPeakCategories {
 	extends Mapper<LongWritable, Text, Text, IntWritable> {
 	
 		final static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss z");
-		private static String filterString; //Variable to store read filter
 		private static IntWritable one = new IntWritable(1);
-		private static String categoryFilter = "electronics.smartphone";
+		private static String categoryFilter = "electronics.smartphone";		
+		private int peakHour;		
+		private int peakHour2;	
+		private HashMap<String, String> sessionIDtoID = new HashMap<String, String>();
+		
+		public void setup(Context context) 
+			throws IOException, InterruptedException {
+
+			try{
+				// Peak hours
+				File peakHourFile = new File("PeakHours.txt");
+				Scanner myReader = new Scanner(peakHourFile);				
+				peakHour = Integer.parseInt(myReader.nextLine());		
+				peakHour2 = Integer.parseInt(myReader.nextLine());		
+				myReader.close();	
+				
+				// Non-smartphone user sessions	
+				File smartphoneSessions = new File("GetSmartphoneUserSessionIDs.txt");
+				Scanner myReader2 = new Scanner(smartphoneSessions);			
+				while (myReader2.hasNextLine()) {
+					String sessionID = myReader2.nextLine();
+					sessionIDtoID.put(sessionID, sessionID);
+				}
+				myReader2.close();
+			} catch (FileNotFoundException e) {
+			      	System.out.println("An error occurred.");
+			      	e.printStackTrace();
+		    	}
+		}
 		
 		public void map(LongWritable key, Text value, Context context
 			) throws IOException, InterruptedException  {
@@ -38,29 +66,20 @@ public class PopularPeakCategories {
 				return;
 			else {	
 				try{
-					File peakHourFile = new File("PeakHours.txt");
-					Scanner myReader = new Scanner(peakHourFile);				
-					int peakHour = Integer.parseInt(myReader.nextLine());
-					myReader.close();	
-					
 					String valueString = value.toString(); //Gets entire row as string
 					String[] singleEvent = valueString.split(","); //Splits row into columns
 					
 					int hour = ZonedDateTime.parse(singleEvent[0], formatter).getHour();
-					
-					if((hour == peakHour) && !singleEvent[4].matches(categoryFilter)){
-						File smartphoneSessions = new File("GetSmartphoneUserSessionIDs.txt");
-						Scanner myReader2 = new Scanner(smartphoneSessions);			
-						while (myReader2.hasNextLine()) {
-							filterString = myReader2.nextLine();
-							if (!singleEvent[8].matches(filterString)){ //If the session ID the filter, we output
-								context.write(new Text(singleEvent[3] + " " + singleEvent[4]), one); //Write key-value pair as output
-								break;
-							}
-						}
-						myReader.close();
-					}
-					
+
+					if((hour == peakHour || hour == peakHour2) && !singleEvent[4].matches(categoryFilter)){
+						String sessionID = singleEvent[8];
+						String joinVal = sessionIDtoID.get(sessionID);
+						// If the user information is not null, then output
+						if (joinVal == null) {
+							context.write(new Text(singleEvent[3] + " " + singleEvent[4]), one); //Write key-value pair as output
+						} 
+					}	
+								
 				} catch (FileNotFoundException e) {
 				      	System.out.println("An error occurred.");
 				      	e.printStackTrace();

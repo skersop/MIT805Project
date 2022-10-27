@@ -10,6 +10,7 @@ import java.io.File;  // Import the File class
 import java.io.FileNotFoundException;  // Import this class to handle errors
 import java.util.Scanner; // Import the Scanner class to read text files
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
@@ -26,34 +27,42 @@ public class FilterSmartphoneUserSessions {
   
 	public static class FilterSmartphoneUserSessionsMapper 
 	extends Mapper<LongWritable, Text, Text, NullWritable> {
+	
+		private HashMap<String, String> sessionIDtoID = new HashMap<String, String>();
+		
+		public void setup(Context context) 
+			throws IOException, InterruptedException {
 
-		private static String filterString = ""; //Variable to store read filter
+			try{
+				File myObj = new File("GetSmartphoneUserSessionIDs.txt");
+				Scanner myReader = new Scanner(myObj);			
 				
-		public void map(LongWritable key, Text value, Context context
-			) throws IOException, InterruptedException  {
+				while (myReader.hasNextLine()) {
+					String sessionID = myReader.nextLine();
+					sessionIDtoID.put(sessionID, sessionID);
+				}
+				
+				myReader.close();
+			} catch (FileNotFoundException e) {
+			      	System.out.println("An error occurred.");
+			      	e.printStackTrace();
+		    	}
+
+
+		}
+
+		public void map(LongWritable key, Text value, Context context)
+			throws IOException, InterruptedException {
 			
-			if (key.get() == 0 && value.toString().contains("event_time")) //Ensures we do not try to process header row from original input file
-				return;
-			else {	
-				try{
-					File myObj = new File("GetSmartphoneUserSessionIDs.txt");
-					Scanner myReader = new Scanner(myObj);				
-					String valueString = value.toString(); //Gets entire row as string
-					String[] singleEvent = valueString.split(","); //Splits row into columns
-					while (myReader.hasNextLine()) {
-						filterString = myReader.nextLine();
-						if (singleEvent[8].matches(filterString)){ //If the session ID the filter, we output
-							context.write(value, NullWritable.get()); //Write key-value pair as output
-							break;
-						}
-					}
-					myReader.close();
-				} catch (FileNotFoundException e) {
-				      	System.out.println("An error occurred.");
-				      	e.printStackTrace();
-			    	}
-			}	
-				
+			String valueString = value.toString(); //Gets entire row as string
+			String[] singleEvent = valueString.split(","); //Splits row into columns
+			
+			String sessionID = singleEvent[8];
+			String joinVal = sessionIDtoID.get(sessionID);
+			// If the user information is not null, then output
+			if (joinVal != null) {
+				context.write(value, NullWritable.get());
+			} 
 		}
 	}
 

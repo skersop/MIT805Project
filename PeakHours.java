@@ -12,6 +12,8 @@ public class PeakHours{
 		try{
 			int highestIndex = 0;
 			int highestValue = 0;
+			int highestIndex2 = 0;
+			int highestValue2 = 0;
 			
 			File myObj = new File("SmartphoneTimes.txt");
 			Scanner myReader = new Scanner(myObj);				
@@ -21,6 +23,12 @@ public class PeakHours{
 				if(Integer.parseInt(valueSplit[1]) > highestValue){
 					highestIndex = Integer.parseInt(valueSplit[0]);
 					highestValue = Integer.parseInt(valueSplit[1]);
+				} else {
+					if(Integer.parseInt(valueSplit[1]) > highestValue2){
+					highestIndex2 = Integer.parseInt(valueSplit[0]);
+					highestValue2 = Integer.parseInt(valueSplit[1]);
+						
+					}
 				}
 			}
 			myReader.close();
@@ -33,8 +41,11 @@ public class PeakHours{
 			}	
 			
 	      		FileWriter myWriter = new FileWriter("PeakHours.txt");
-	      		System.out.println("Peak hour: " + highestIndex);
+	      		System.out.println("Peak hour 1: " + highestIndex);
+	      		System.out.println("Peak hour 2: " + highestIndex2);
 	      		myWriter.write(Integer.toString(highestIndex));
+	      		myWriter.write("\n");
+	      		myWriter.write(Integer.toString(highestIndex2));
 	      		myWriter.close();
 	      		      		
 		} catch (FileNotFoundException e) {
