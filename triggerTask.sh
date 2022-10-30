@@ -14,5 +14,4 @@ rm -r ${TASK}
 echo "----- Running job -----"
 ${HADOOP} jar ${TASK}.jar ${TASK} ${INPUT_PATH} ${TASK}
 
-echo "----- Printing results -----"
-cat ${TASK}/*
+

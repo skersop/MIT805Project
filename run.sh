@@ -1,8 +1,6 @@
 #!/bin/bash
 
 # This script controls the overall process flow
-# TODO: 
-#	Check whether tasks ran successfully
 
 INPUT_PATH=$1;
 HADOOP="$( which hadoop )"
@@ -17,6 +15,7 @@ TASK4="CountCategoryCodes"
 TASK5="CountBrands"
 TASK6="SmartphoneTimes"
 TASK7="PopularPeakCategories"
+
 bash ./triggerTask.sh ${HADOOP} ${TASK1} ${INPUT_PATH}
 cat ${TASK1}/* &> "${TASK1}.txt"
 rm -r ${TASK1}
@@ -48,7 +47,6 @@ java PeakHours
 bash ./triggerTask.sh ${HADOOP} ${TASK7} ${INPUT_PATH}
 cat ${TASK7}/* &> "${TASK7}.txt"
 rm -r ${TASK7}
-
 
 echo "========================================"
 echo "---------------- Cleanup ----------------"

@@ -58,7 +58,7 @@ public class CountBrands {
 
 	public static void main(String[] args) throws Exception {
 		Configuration conf = new Configuration();
-		Job job = Job.getInstance(conf, "CountCategoryCodes");
+		Job job = Job.getInstance(conf, "CountBrands");
 		job.setJarByClass(CountBrands.class);
 		job.setMapperClass(CountBrandsMapper.class);
 		job.setCombinerClass(CountBrandsReducer.class);
