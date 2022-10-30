@@ -2,11 +2,11 @@
 library(tidyverse) 
 library(lubridate) # For datetime conversions
 library(patchwork) # For graph stitching
-library(corrplot)
+library(ggcorrplot) # For correlation plot
 
 # ---- Directory and other set-up ----
-setwd("C:\\Users\\User\\Downloads\\2019-Oct.csv")
-getwd()
+#setwd() # Update to relevant project path
+#getwd()
 options(scipen = 99999,
         dplyr.summarise.inform = FALSE)
 
@@ -58,6 +58,10 @@ p1 <- p1_data %>%
 
 p1
 
+# Cleanup
+rm(p1_data)
+rm(p1)
+
 # For the second visualisation, split between smartphone and non-smartphone
 p2_data <- data %>%
   filter(event_type == 'purchase') %>%
@@ -67,6 +71,7 @@ p2_data <- data %>%
     category = if_else(category_code == 'electronics.smartphone', 'Smartphone', 'Non-smartphone')
   )
 
+# Create plot
 p2 <- p2_data %>%
   ggplot() +
   geom_density(
@@ -124,7 +129,7 @@ p3_data_b <- p3_data_a%>%
   )
 
 # Calculate correlation matrix and plot
-p3_data_b %>%
+p3 <- p3_data_b %>%
   select(-user_session) %>%
   rename("Distinct Categories" = num_categories,
          "Distinct Brands" = num_brands,
@@ -144,3 +149,8 @@ p3_data_b %>%
     plot.title = element_text(hjust = 0.5),
     panel.background = element_rect(fill = "white", colour = "grey")
   )
+  
+# Cleanup
+rm(p3_data_a)
+rm(p3_data_b)
+rm(p3)

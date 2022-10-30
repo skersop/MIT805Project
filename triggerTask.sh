@@ -1,8 +1,8 @@
+# Compiles and triggers passed hadoop task
 
 HADOOP=$1
 TASK=$2
 INPUT_PATH=$3
-
 
 echo "----- Compiling script -----"
 ${HADOOP} com.sun.tools.javac.Main ${TASK}.java

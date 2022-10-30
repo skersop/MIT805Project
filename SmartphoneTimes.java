@@ -1,9 +1,12 @@
+/*
+Description:	Counts number of smartphone-related events for each hour of the day
+*/
+
 import java.io.IOException;
 import java.util.StringTokenizer;
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
-
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.IntWritable;
@@ -23,7 +26,6 @@ public class SmartphoneTimes {
 
 		//The desired filter
 		private static String filterStringCategory = "electronics.smartphone"; 
-		//private static String filterStringEvent = "purchase"; 
 		private IntWritable one = new IntWritable(1);
 		final static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss z");
 		
@@ -36,7 +38,6 @@ public class SmartphoneTimes {
 				String valueString = value.toString(); //Gets entire row as string
 				String[] singleEvent = valueString.split(","); //Splits row into columns
 				if (singleEvent[4].matches(filterStringCategory)){ //If the category matches the filter, we output
-					//context.write(new Text(singleEvent[5]), one); //Write key-value pair as output
 					ZonedDateTime dateTime = ZonedDateTime.parse(singleEvent[0], formatter);
 					context.write(new IntWritable(dateTime.getHour()), one); //Write key-value pair as output
 				}
@@ -63,7 +64,7 @@ public class SmartphoneTimes {
 
 	public static void main(String[] args) throws Exception {
 		Configuration conf = new Configuration();
-		Job job = Job.getInstance(conf, "category mean");
+		Job job = Job.getInstance(conf, "SmartphoneTimes");
 		job.setJarByClass(SmartphoneTimes.class);
 		job.setMapperClass(SmartphoneTimesMapper.class);
 		job.setReducerClass(SmartphoneTimesReducer.class);

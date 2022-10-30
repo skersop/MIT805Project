@@ -50,7 +50,7 @@ public class GetSmartphoneUserSessionIDs {
 
 	public static void main(String[] args) throws Exception {
 		Configuration conf = new Configuration();
-		Job job = Job.getInstance(conf, "filterSmartphoneUserSessions");
+		Job job = Job.getInstance(conf, "GetSmartphoneUserSessionIDs");
 		job.setJarByClass(GetSmartphoneUserSessionIDs.class);
 		job.setMapperClass(GetSmartphoneUserSessionIDsMapper.class);
 		job.setCombinerClass(GetSmartphoneUserSessionIDsReducer.class);

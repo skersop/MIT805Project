@@ -1,11 +1,14 @@
+/*
+Description:	Calculates popular non-smartphone categories for hours when smartphone interactions are most prevalent
+*/
 import java.io.IOException;
 import java.util.StringTokenizer;
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
-import java.io.File;  // Import the File class
-import java.io.FileNotFoundException;  // Import this class to handle errors
-import java.util.Scanner; // Import the Scanner class to read text files
+import java.io.File;  
+import java.io.FileNotFoundException; 
+import java.util.Scanner; 
 import java.io.File;
 import java.io.FileWriter;
 import java.util.HashMap;
@@ -27,6 +30,7 @@ public class PopularPeakCategories {
 	public static class PopularPeakCategoriesMapper 
 	extends Mapper<LongWritable, Text, Text, IntWritable> {
 	
+		//Initialise variables
 		final static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss z");
 		private static IntWritable one = new IntWritable(1);
 		private static String categoryFilter = "electronics.smartphone";		
@@ -38,14 +42,14 @@ public class PopularPeakCategories {
 			throws IOException, InterruptedException {
 
 			try{
-				// Peak hours
+				// Retrieve peak hours
 				File peakHourFile = new File("PeakHours.txt");
 				Scanner myReader = new Scanner(peakHourFile);				
 				peakHour = Integer.parseInt(myReader.nextLine());		
 				peakHour2 = Integer.parseInt(myReader.nextLine());		
 				myReader.close();	
 				
-				// Non-smartphone user sessions	
+				// Retrieve list of non-smartphone user sessions and map to hashmap
 				File smartphoneSessions = new File("GetSmartphoneUserSessionIDs.txt");
 				Scanner myReader2 = new Scanner(smartphoneSessions);			
 				while (myReader2.hasNextLine()) {
@@ -69,12 +73,14 @@ public class PopularPeakCategories {
 					String valueString = value.toString(); //Gets entire row as string
 					String[] singleEvent = valueString.split(","); //Splits row into columns
 					
-					int hour = ZonedDateTime.parse(singleEvent[0], formatter).getHour();
+					int hour = ZonedDateTime.parse(singleEvent[0], formatter).getHour(); //Parse event_time and get the relevant hour
 
-					if((hour == peakHour || hour == peakHour2) && !singleEvent[4].matches(categoryFilter)){
+					if((hour == peakHour || hour == peakHour2) && !singleEvent[4].matches(categoryFilter)){ //If a peak hour and not a smartphone-related event
+						// If user session does not appear in the hashmap, output
+						// Since we want non-smartphone sessions
+						// We are performing a left outer join
 						String sessionID = singleEvent[8];
-						String joinVal = sessionIDtoID.get(sessionID);
-						// If the user information is not null, then output
+						String joinVal = sessionIDtoID.get(sessionID);/ 
 						if (joinVal == null) {
 							context.write(new Text(singleEvent[3] + " " + singleEvent[4]), one); //Write key-value pair as output
 						} 
@@ -90,7 +96,7 @@ public class PopularPeakCategories {
 
 	public static class PopularPeakCategoriesReducer 
 	extends Reducer<Text, IntWritable, Text, IntWritable> {
-	
+		// Basic count reducer
 		private IntWritable result = new IntWritable(1);
 
 		public void reduce(Text key, Iterable<IntWritable> values,Context context
@@ -107,7 +113,7 @@ public class PopularPeakCategories {
 
 	public static void main(String[] args) throws Exception {
 		Configuration conf = new Configuration();
-		Job job = Job.getInstance(conf, "category mean");
+		Job job = Job.getInstance(conf, "PopularPeakCategories");
 		job.setJarByClass(PopularPeakCategories.class);
 		job.setMapperClass(PopularPeakCategoriesMapper.class);
 		job.setReducerClass(PopularPeakCategoriesReducer.class);
